@@ -7,6 +7,8 @@ export interface IUser extends Document {
   password?: string;
   role: "admin" | "voter";
   activated: boolean;
+  level?: "100" | "200" | "300" | "400";
+  inviteStatus: "pending" | "invited" | "activated" | "voted";
   inviteToken?: string;
   inviteTokenExpiry?: Date;
   createdAt: Date;
@@ -20,10 +22,17 @@ const UserSchema = new Schema<IUser>(
     password: { type: String },
     role: { type: String, enum: ["admin", "voter"], default: "voter" },
     activated: { type: Boolean, default: false },
+    level: { type: String, enum: ["100", "200", "300", "400"] },
+    inviteStatus: {
+      type: String,
+      enum: ["pending", "invited", "activated", "voted"],
+      default: "pending",
+    },
     inviteToken: { type: String },
     inviteTokenExpiry: { type: Date },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
-export const User = mongoose.models.User || mongoose.model<IUser>("User", UserSchema);
+delete mongoose.models.User;
+export const User = mongoose.model<IUser>("User", UserSchema);
