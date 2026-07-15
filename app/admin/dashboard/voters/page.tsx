@@ -23,6 +23,14 @@ type Stats = {
 const LEVELS = ["all", "100", "200", "300", "400"] as const;
 type Level = (typeof LEVELS)[number];
 
+const emptyStats: Stats = {
+  total: 0,
+  pending: 0,
+  invited: 0,
+  activated: 0,
+  voted: 0,
+};
+
 const statusColors: Record<string, { bg: string; color: string }> = {
   pending:   { bg: "#f1f5f9", color: "#64748b" },
   invited:   { bg: "#dbeafe", color: "#1e40af" },
@@ -32,7 +40,7 @@ const statusColors: Record<string, { bg: string; color: string }> = {
 
 export default function VotersPage() {
   const [voters, setVoters] = useState<Voter[]>([]);
-  const [stats, setStats] = useState<Stats>({ total: 0, pending: 0, invited: 0, activated:0});
+  const [stats, setStats] = useState<Stats>(emptyStats);
   const [activeLevel, setActiveLevel] = useState<Level>("all");
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
@@ -52,7 +60,10 @@ export default function VotersPage() {
     const res = await fetch(`/api/admin/voters?${params}`);
     const data = await res.json();
     setVoters(data.voters || []);
-    setStats(data.stats || {});
+    setStats({
+      ...emptyStats,
+      ...(data.stats || {}),
+    });
     setLoading(false);
   }
 

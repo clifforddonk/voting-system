@@ -19,9 +19,11 @@ export async function POST(req: NextRequest) {
 
     const body = await req.json();
     const rows: unknown[] = body.voters;
-    const level: string = body.level;
+    const allowedLevels = ["100", "200", "300", "400"] as const;
+    type Level = (typeof allowedLevels)[number];
+    const level = body.level as string;
 
-    if (!["100", "200", "300", "400"].includes(level)) {
+    if (!allowedLevels.includes(level as Level)) {
       return NextResponse.json({ error: "Invalid level" }, { status: 400 });
     }
 
@@ -38,7 +40,7 @@ export async function POST(req: NextRequest) {
 
       if (!parsed.success) {
         results.failed++;
-        results.errors.push(`Invalid row — ${parsed.error.errors[0].message}`);
+        results.errors.push(`Invalid row — ${parsed.error.issues[0].message}`);
         continue;
       }
 
@@ -55,7 +57,7 @@ export async function POST(req: NextRequest) {
         email,
         studentId,
         role: "voter",
-        level,
+        level: level as Level,
         activated: false,
         inviteStatus: "pending",
       });
