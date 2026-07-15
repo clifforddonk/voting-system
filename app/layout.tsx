@@ -1,24 +1,9 @@
 
 import type { Metadata } from "next";
-import {  Nunito } from "next/font/google";
 import Providers from "./Providers";
 import "./globals.css";
 
-// const geistSans = Geist({
-//   variable: "--font-geist-sans",
-//   subsets: ["latin"],
-// });
-
-// const geistMono = Geist_Mono({
-//   variable: "--font-geist-mono",
-//   subsets: ["latin"],
-// });
-
-const nunito = Nunito({
-  variable: "--font-nunito",
-  subsets: ["latin"],
-   weight: ["400", "700"],
-});
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -31,10 +16,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html
-      lang="en"
-      className={`${nunito.variable} h-full antialiased`}
-    >
+    <html lang="en" className="h-full antialiased">
       <body className="min-h-full flex flex-col">
         <Providers>{children}</Providers>
       </body>
