@@ -5,9 +5,9 @@ export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
   const token = await getToken({
-    req,
-    secret: process.env.AUTH_SECRET,
-  });
+  req,
+  secret: process.env.NEXTAUTH_SECRET,
+});
 
   // Protect /admin routes
   if (pathname.startsWith("/admin")) {
