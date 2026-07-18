@@ -4,10 +4,11 @@ import { getToken } from "next-auth/jwt";
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
+  const secret = process.env.NEXTAUTH_SECRET ?? "dev-secret";
   const token = await getToken({
-  req,
-  secret: process.env.NEXTAUTH_SECRET,
-});
+    req,
+    secret,
+  });
 
   // Protect /admin routes
   if (pathname.startsWith("/admin")) {

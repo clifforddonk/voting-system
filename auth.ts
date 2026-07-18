@@ -13,6 +13,7 @@ const loginSchema = z.object({
 });
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
+  secret: process.env.NEXTAUTH_SECRET ?? "dev-secret",
   session: { strategy: "jwt" },
   pages: {
     signIn: "/auth/login",
