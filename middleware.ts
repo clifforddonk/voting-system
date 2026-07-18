@@ -13,11 +13,6 @@ export async function middleware(req: NextRequest) {
     secret,
   });
 
-  console.error("[middleware] pathname=", pathname);
-  console.error("[middleware] token=", token);
-  console.error("[middleware] secret present=", Boolean(secret));
-  console.error("[middleware] cookies=", req.headers.get("cookie"));
-
   // Protect /admin routes
   if (pathname.startsWith("/admin")) {
     if (!token) {

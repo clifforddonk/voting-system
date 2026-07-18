@@ -36,7 +36,9 @@ export default function LoginPage() {
     let session: any = null;
 
     while (attempts < 8) {
-      const sessionRes = await fetch("/api/auth/session", { cache: "no-store" });
+      const sessionRes = await fetch("/api/auth/session", {
+        cache: "no-store",
+      });
       session = await sessionRes.json();
 
       if (session?.user?.email) {
@@ -58,7 +60,12 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen flex flex-col bg-white">
       {/* Subtle top accent bar */}
-      <div style={{ height: "3px", background: "linear-gradient(90deg, #5B6BF8, #4A5BE0, #3A4BC8)" }} />
+      <div
+        style={{
+          height: "3px",
+          background: "linear-gradient(90deg, #5B6BF8, #4A5BE0, #3A4BC8)",
+        }}
+      />
 
       {/* Nav */}
       <nav className="flex items-center justify-between px-8 py-4 border-b border-gray-100">
@@ -67,7 +74,10 @@ export default function LoginPage() {
             className="w-2 h-2 rounded-full"
             style={{ background: "#5B6BF8" }}
           />
-          <span className="font-semibold tracking-wide text-sm" style={{ color: "#4A5BE0" }}>
+          <span
+            className="font-semibold tracking-wide text-sm"
+            style={{ color: "#4A5BE0" }}
+          >
             QuickVote
           </span>
         </div>
@@ -79,7 +89,6 @@ export default function LoginPage() {
       {/* Main content */}
       <div className="flex-1 flex items-center justify-center px-4 py-12">
         <div className="w-full max-w-md">
-
           {/* Label pill */}
           <div className="flex justify-center mb-5">
             <span
@@ -102,7 +111,8 @@ export default function LoginPage() {
           <div
             className="rounded-2xl p-8"
             style={{
-              background: "linear-gradient(135deg, #5B6BF8 0%, #4A5BE0 50%, #3A4BC8 100%)",
+              background:
+                "linear-gradient(135deg, #5B6BF8 0%, #4A5BE0 50%, #3A4BC8 100%)",
               boxShadow: "0 20px 60px rgba(74, 91, 224, 0.35)",
             }}
           >
@@ -115,8 +125,18 @@ export default function LoginPage() {
                   border: "1px solid rgba(255,255,255,0.25)",
                 }}
               >
-                <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                <svg
+                  className="w-4 h-4 shrink-0"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M5 13l4 4L19 7"
+                  />
                 </svg>
                 Account activated! You can now sign in.
               </div>
@@ -191,8 +211,18 @@ export default function LoginPage() {
                     border: "1px solid rgba(255,120,120,0.3)",
                   }}
                 >
-                  <svg className="w-4 h-4 mt-0.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
+                  <svg
+                    className="w-4 h-4 mt-0.5 shrink-0"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"
+                    />
                   </svg>
                   {error}
                 </div>
@@ -210,10 +240,13 @@ export default function LoginPage() {
                   boxShadow: loading ? "none" : "0 4px 14px rgba(0,0,0,0.12)",
                 }}
                 onMouseEnter={(e) => {
-                  if (!loading) (e.target as HTMLButtonElement).style.background = "rgba(255,255,255,0.92)";
+                  if (!loading)
+                    (e.target as HTMLButtonElement).style.background =
+                      "rgba(255,255,255,0.92)";
                 }}
                 onMouseLeave={(e) => {
-                  if (!loading) (e.target as HTMLButtonElement).style.background = "white";
+                  if (!loading)
+                    (e.target as HTMLButtonElement).style.background = "white";
                 }}
               >
                 {loading ? "Signing in…" : "Sign in to vote →"}
