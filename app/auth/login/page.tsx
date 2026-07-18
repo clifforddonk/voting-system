@@ -32,13 +32,25 @@ export default function LoginPage() {
       return;
     }
 
-    const sessionRes = await fetch("/api/auth/session");
-    const session = await sessionRes.json();
+    let attempts = 0;
+    let session: any = null;
+
+    while (attempts < 8) {
+      const sessionRes = await fetch("/api/auth/session", { cache: "no-store" });
+      session = await sessionRes.json();
+
+      if (session?.user?.email) {
+        break;
+      }
+
+      attempts += 1;
+      await new Promise((resolve) => setTimeout(resolve, 250));
+    }
 
     if (session?.user?.role === "admin") {
-      router.push("/admin/dashboard");
+      router.replace("/admin/dashboard");
     } else {
-      router.push("/vote");
+      router.replace("/vote");
     }
     router.refresh();
   }
