@@ -4,7 +4,7 @@ import { getToken } from "next-auth/jwt";
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
-  const secret = process.env.NEXTAUTH_SECRET ?? (process.env.NODE_ENV === "development" ? "dev-secret" : undefined);
+  const secret = process.env.AUTH_SECRET ?? process.env.NEXTAUTH_SECRET ?? (process.env.NODE_ENV === "development" ? "dev-secret" : undefined);
   const token = await getToken({
     req,
     secret,
