@@ -4,6 +4,7 @@ export const dynamic = "force-dynamic";
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import styles from "../adminPage.module.css";
 
 type Election = {
   _id: string;
@@ -74,16 +75,17 @@ export default function ElectionsPage() {
   }
 
   return (
-    <div style={{ padding: "24px", background: "#f8fafc", minHeight: "100vh" }}>
+    <div className={styles.page}>
 
       {/* Header */}
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "24px" }}>
+      <div className={styles.header}>
         <div>
           <h1 style={{ fontSize: "18px", fontWeight: 500, color: "#1e293b", margin: "0 0 4px" }}>Elections</h1>
           <p style={{ fontSize: "13px", color: "#64748b", margin: 0 }}>Create and manage departmental elections</p>
         </div>
         <button
           onClick={() => setShowCreate(true)}
+          className={styles.headerAction}
           style={{ background: "#6366f1", color: "#fff", border: "none", padding: "8px 16px", borderRadius: "8px", fontSize: "13px", fontWeight: 500, cursor: "pointer" }}
         >
           + New election
@@ -102,12 +104,11 @@ export default function ElectionsPage() {
       ) : (
         <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
           {elections.map((election) => (
-            <div key={election._id} style={{
+            <div key={election._id} className={styles.electionCard} style={{
               background: "#fff", border: "0.5px solid #e2e8f0", borderRadius: "12px", padding: "20px 24px",
-              display: "flex", alignItems: "center", justifyContent: "space-between",
             }}>
-              <div style={{ flex: 1 }}>
-                <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "6px" }}>
+              <div className={styles.electionDetails}>
+                <div className={styles.electionTitleRow} style={{ marginBottom: "6px" }}>
                   <span style={{ fontSize: "15px", fontWeight: 500, color: "#1e293b" }}>{election.title}</span>
                   <span style={{
                     fontSize: "10px", fontWeight: 500, padding: "3px 10px", borderRadius: "20px",
@@ -125,7 +126,7 @@ export default function ElectionsPage() {
                 </div>
               </div>
 
-              <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+              <div className={styles.actions}>
                 {/* Manage positions & candidates */}
                 <button
                   onClick={() => router.push(`/admin/dashboard/elections/${election._id}`)}
@@ -171,8 +172,8 @@ export default function ElectionsPage() {
 
       {/* Create modal */}
       {showCreate && (
-        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.4)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 100 }}>
-          <div style={{ background: "#fff", borderRadius: "16px", padding: "28px", width: "100%", maxWidth: "460px" }}>
+        <div className={styles.modalBackdrop}>
+          <div className={styles.modal} style={{ background: "#fff", borderRadius: "16px", padding: "28px" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
               <h2 style={{ fontSize: "16px", fontWeight: 500, color: "#1e293b", margin: 0 }}>New election</h2>
               <button onClick={() => setShowCreate(false)} style={{ background: "none", border: "none", fontSize: "18px", cursor: "pointer", color: "#94a3b8" }}>✕</button>

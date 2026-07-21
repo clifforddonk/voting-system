@@ -34,10 +34,10 @@ const emptyStats: Stats = {
 };
 
 const statusColors: Record<string, { bg: string; color: string }> = {
-  pending:   { bg: "#f1f5f9", color: "#64748b" },
-  invited:   { bg: "#dbeafe", color: "#1e40af" },
+  pending: { bg: "#f1f5f9", color: "#64748b" },
+  invited: { bg: "#dbeafe", color: "#1e40af" },
   activated: { bg: "#dcfce7", color: "#166534" },
-  voted:     { bg: "#ede9fe", color: "#5b21b6" },
+  voted: { bg: "#ede9fe", color: "#5b21b6" },
 };
 
 export default function VotersPage() {
@@ -69,7 +69,9 @@ export default function VotersPage() {
     setLoading(false);
   }
 
-  useEffect(() => { fetchVoters(); }, [activeLevel, search]);
+  useEffect(() => {
+    fetchVoters();
+  }, [activeLevel, search]);
 
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     setImportResult(null);
@@ -113,97 +115,65 @@ export default function VotersPage() {
     fetchVoters();
   }
 
-  const pendingCount = activeLevel === "all"
-    ? stats.pending
-    : voters.filter(v => v.inviteStatus === "pending").length;
+  const pendingCount = activeLevel === "all" ? stats.pending : voters.filter((v) => v.inviteStatus === "pending").length;
 
   return (
-    <div style={{ padding: "24px", background: "#f8fafc", minHeight: "100vh" }}>
-
-      {/* Header */}
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "24px" }}>
+    <div className="space-y-4 sm:space-y-6">
+      <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
         <div>
-          <h1 style={{ fontSize: "18px", fontWeight: 500, color: "#1e293b", margin: "0 0 4px" }}>Voters</h1>
-          <p style={{ fontSize: "13px", color: "#64748b", margin: 0 }}>Manage registered voters and send invitations</p>
+          <h1 className="text-xl font-semibold text-slate-800">Voters</h1>
+          <p className="text-sm text-slate-500">Manage registered voters and send invitations</p>
         </div>
-        <div style={{ display: "flex", gap: "8px" }}>
+        <div className="flex flex-col gap-2 sm:flex-row">
           {pendingCount > 0 && (
             <button
               onClick={() => handleSendInvites(activeLevel === "all" ? undefined : activeLevel)}
               disabled={!!sendingLevel}
-              style={{
-                background: "#fff",
-                border: "0.5px solid #e2e8f0",
-                color: "#1e293b",
-                padding: "8px 16px",
-                borderRadius: "8px",
-                fontSize: "13px",
-                fontWeight: 500,
-                cursor: "pointer",
-              }}
+              className="rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm font-medium text-slate-700 transition hover:bg-slate-50 disabled:opacity-70"
             >
               {sendingLevel ? "Sending..." : `Send invites (${pendingCount} pending)`}
             </button>
           )}
           <button
-            onClick={() => { setShowImport(true); setImportResult(null); setPreview([]); }}
-            style={{
-              background: "#6366f1",
-              color: "#fff",
-              border: "none",
-              padding: "8px 16px",
-              borderRadius: "8px",
-              fontSize: "13px",
-              fontWeight: 500,
-              cursor: "pointer",
+            onClick={() => {
+              setShowImport(true);
+              setImportResult(null);
+              setPreview([]);
             }}
+            className="rounded-xl bg-indigo-600 px-3 py-2.5 text-sm font-semibold text-white transition hover:bg-indigo-700"
           >
             + Import voters
           </button>
         </div>
       </div>
 
-      {/* Stats */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "10px", marginBottom: "20px" }}>
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
         {[
           { label: "Total", value: stats.total, color: "#6366f1", bg: "#eef2ff" },
           { label: "Pending", value: stats.pending, color: "#64748b", bg: "#f1f5f9" },
           { label: "Invited", value: stats.invited, color: "#1e40af", bg: "#dbeafe" },
           { label: "Activated", value: stats.activated, color: "#166534", bg: "#dcfce7" },
-  
         ].map(({ label, value, color, bg }) => (
-          <div key={label} style={{ background: "#fff", border: "0.5px solid #e2e8f0", borderRadius: "10px", padding: "14px 16px" }}>
-            <div style={{ width: "28px", height: "28px", borderRadius: "6px", background: bg, marginBottom: "10px" }} />
-            <div style={{ fontSize: "22px", fontWeight: 500, color }}>{value}</div>
-            <div style={{ fontSize: "12px", color: "#94a3b8", marginTop: "2px" }}>{label}</div>
+          <div key={label} className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+            <div className="mb-3 h-7 w-7 rounded-lg" style={{ background: bg }} />
+            <div className="text-2xl font-semibold" style={{ color }}>
+              {value}
+            </div>
+            <div className="mt-1 text-sm text-slate-400">{label}</div>
           </div>
         ))}
       </div>
 
-      {/* Level tabs + search */}
-      <div style={{
-        background: "#fff", border: "0.5px solid #e2e8f0", borderRadius: "10px",
-        overflow: "hidden", marginBottom: "0",
-      }}>
-        <div style={{
-          display: "flex", justifyContent: "space-between", alignItems: "center",
-          padding: "12px 16px", borderBottom: "0.5px solid #e2e8f0",
-        }}>
-          <div style={{ display: "flex", gap: "4px" }}>
+      <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+        <div className="flex flex-col gap-3 border-b border-slate-200 p-3 sm:flex-row sm:items-center sm:justify-between sm:p-4">
+          <div className="flex flex-wrap gap-2">
             {LEVELS.map((level) => (
               <button
                 key={level}
                 onClick={() => setActiveLevel(level)}
-                style={{
-                  padding: "6px 14px",
-                  borderRadius: "6px",
-                  fontSize: "12px",
-                  fontWeight: 500,
-                  border: "none",
-                  cursor: "pointer",
-                  background: activeLevel === level ? "#6366f1" : "transparent",
-                  color: activeLevel === level ? "#fff" : "#64748b",
-                }}
+                className={`rounded-full px-3 py-1.5 text-sm font-medium transition ${
+                  activeLevel === level ? "bg-indigo-600 text-white" : "bg-slate-100 text-slate-600"
+                }`}
               >
                 {level === "all" ? "All levels" : `Level ${level}`}
               </button>
@@ -214,97 +184,66 @@ export default function VotersPage() {
             placeholder="Search name, email or ID..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            style={{
-              padding: "7px 12px",
-              border: "0.5px solid #e2e8f0",
-              borderRadius: "8px",
-              fontSize: "12px",
-              width: "220px",
-              background: "#f8fafc",
-              color: "#1e293b",
-            }}
+            className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-700 outline-none focus:border-indigo-400 sm:w-64"
           />
         </div>
 
-        {/* Table */}
-        <div>
-          <div style={{
-            display: "grid", gridTemplateColumns: "2fr 2fr 1fr 1fr 1fr",
-            padding: "8px 16px", background: "#f8fafc", borderBottom: "0.5px solid #e2e8f0",
-          }}>
-            {["Name", "Email", "Student ID", "Level", "Status"].map((h) => (
-              <span key={h} style={{ fontSize: "11px", color: "#94a3b8", fontWeight: 500 }}>{h}</span>
-            ))}
+        {loading ? (
+          <div className="p-8 text-center text-sm text-slate-500">Loading...</div>
+        ) : voters.length === 0 ? (
+          <div className="p-10 text-center">
+            <div className="mb-2 text-3xl">📭</div>
+            <div className="text-sm font-medium text-slate-700">No voters found</div>
+            <div className="mt-1 text-sm text-slate-500">Import a CSV to get started</div>
           </div>
-
-          {loading ? (
-            <div style={{ padding: "32px", textAlign: "center", color: "#94a3b8", fontSize: "13px" }}>Loading...</div>
-          ) : voters.length === 0 ? (
-            <div style={{ padding: "48px", textAlign: "center" }}>
-              <div style={{ fontSize: "32px", marginBottom: "8px" }}>📭</div>
-              <div style={{ fontSize: "14px", color: "#64748b" }}>No voters found</div>
-              <div style={{ fontSize: "12px", color: "#94a3b8", marginTop: "4px" }}>Import a CSV to get started</div>
-            </div>
-          ) : (
-            voters.map((voter, i) => (
-              <div key={voter._id} style={{
-                display: "grid", gridTemplateColumns: "2fr 2fr 1fr 1fr 1fr",
-                padding: "11px 16px", borderBottom: i < voters.length - 1 ? "0.5px solid #f1f5f9" : "none",
-                alignItems: "center",
-              }}>
-                <span style={{ fontSize: "13px", color: "#1e293b", fontWeight: 500 }}>{voter.name}</span>
-                <span style={{ fontSize: "12px", color: "#64748b" }}>{voter.email}</span>
-                <span style={{ fontSize: "12px", color: "#64748b" }}>{voter.studentId || "—"}</span>
-                <span style={{ fontSize: "12px", color: "#64748b" }}>{voter.level ? `Level ${voter.level}` : "—"}</span>
-                <span>
-                  <span style={{
-                    display: "inline-block", fontSize: "10px", fontWeight: 500,
-                    padding: "3px 10px", borderRadius: "20px",
+        ) : (
+          <div className="divide-y divide-slate-100">
+            {voters.map((voter) => (
+              <div key={voter._id} className="flex flex-col gap-2 p-4 sm:flex-row sm:items-center sm:justify-between">
+                <div className="min-w-0">
+                  <div className="text-sm font-semibold text-slate-800">{voter.name}</div>
+                  <div className="text-sm text-slate-500">{voter.email}</div>
+                  <div className="mt-1 text-xs text-slate-400">
+                    {voter.studentId ? `ID: ${voter.studentId}` : "No student ID"} • {voter.level ? `Level ${voter.level}` : "Level unknown"}
+                  </div>
+                </div>
+                <span
+                  className="inline-flex w-fit rounded-full px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.2em]"
+                  style={{
                     background: statusColors[voter.inviteStatus]?.bg,
                     color: statusColors[voter.inviteStatus]?.color,
-                    textTransform: "capitalize",
-                  }}>
-                    {voter.inviteStatus}
-                  </span>
+                  }}
+                >
+                  {voter.inviteStatus}
                 </span>
               </div>
-            ))
-          )}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
 
-      {/* Import modal */}
       {showImport && (
-        <div style={{
-          position: "fixed", inset: 0, background: "rgba(0,0,0,0.4)",
-          display: "flex", alignItems: "center", justifyContent: "center", zIndex: 100,
-        }}>
-          <div style={{
-            background: "#fff", borderRadius: "16px", padding: "28px",
-            width: "100%", maxWidth: "520px", maxHeight: "90vh", overflowY: "auto",
-          }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
-              <h2 style={{ fontSize: "16px", fontWeight: 500, color: "#1e293b", margin: 0 }}>Import voters</h2>
-              <button onClick={() => setShowImport(false)} style={{ background: "none", border: "none", fontSize: "18px", cursor: "pointer", color: "#94a3b8" }}>✕</button>
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/40 p-4">
+          <div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-2xl bg-white p-5 shadow-2xl sm:p-7">
+            <div className="mb-5 flex items-center justify-between">
+              <h2 className="text-lg font-semibold text-slate-800">Import voters</h2>
+              <button onClick={() => setShowImport(false)} className="text-lg text-slate-400 transition hover:text-slate-600">
+                ✕
+              </button>
             </div>
 
-            {/* Level selector */}
-            <div style={{ marginBottom: "16px" }}>
-              <label style={{ fontSize: "12px", fontWeight: 500, color: "#475569", display: "block", marginBottom: "6px" }}>
+            <div className="mb-4">
+              <label className="mb-1.5 block text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
                 Which level is this CSV for?
               </label>
-              <div style={{ display: "flex", gap: "8px" }}>
+              <div className="flex flex-wrap gap-2">
                 {["100", "200", "300", "400"].map((l) => (
                   <button
                     key={l}
                     onClick={() => setImportLevel(l)}
-                    style={{
-                      flex: 1, padding: "8px", borderRadius: "8px", fontSize: "13px", fontWeight: 500,
-                      border: importLevel === l ? "2px solid #6366f1" : "0.5px solid #e2e8f0",
-                      background: importLevel === l ? "#eef2ff" : "#fff",
-                      color: importLevel === l ? "#6366f1" : "#64748b",
-                      cursor: "pointer",
-                    }}
+                    className={`flex-1 rounded-lg px-3 py-2 text-sm font-semibold ${
+                      importLevel === l ? "bg-indigo-600 text-white" : "border border-slate-200 bg-white text-slate-600"
+                    }`}
                   >
                     Level {l}
                   </button>
@@ -312,34 +251,27 @@ export default function VotersPage() {
               </div>
             </div>
 
-            {/* File upload */}
-            <div style={{
-              border: "1.5px dashed #e2e8f0", borderRadius: "10px",
-              padding: "28px", textAlign: "center", marginBottom: "16px", background: "#f8fafc",
-            }}>
-              <input ref={fileRef} type="file" accept=".csv" onChange={handleFileChange} style={{ display: "none" }} id="csv-input" />
-              <label htmlFor="csv-input" style={{ cursor: "pointer", color: "#6366f1", fontSize: "13px", fontWeight: 500 }}>
+            <div className="mb-4 rounded-xl border border-dashed border-slate-200 bg-slate-50 p-6 text-center">
+              <input ref={fileRef} type="file" accept=".csv" onChange={handleFileChange} className="hidden" id="csv-input" />
+              <label htmlFor="csv-input" className="cursor-pointer text-sm font-semibold text-indigo-600">
                 Click to upload CSV
               </label>
-              <p style={{ color: "#94a3b8", fontSize: "11px", marginTop: "4px" }}>
-                Columns: name, email, studentId
-              </p>
+              <p className="mt-1 text-xs text-slate-400">Columns: name, email, studentId</p>
             </div>
 
-            {/* Preview */}
             {preview.length > 0 && (
-              <div style={{ marginBottom: "16px" }}>
-                <p style={{ fontSize: "12px", color: "#64748b", marginBottom: "6px" }}>Preview (first 5 rows)</p>
-                <div style={{ border: "0.5px solid #e2e8f0", borderRadius: "8px", overflow: "hidden" }}>
-                  <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", padding: "8px 12px", background: "#f8fafc", borderBottom: "0.5px solid #e2e8f0" }}>
+              <div className="mb-4">
+                <p className="mb-2 text-sm text-slate-600">Preview (first 5 rows)</p>
+                <div className="overflow-hidden rounded-xl border border-slate-200">
+                  <div className="grid grid-cols-3 bg-slate-50 px-3 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">
                     {Object.keys(preview[0]).map((h) => (
-                      <span key={h} style={{ fontSize: "11px", color: "#94a3b8", fontWeight: 500 }}>{h}</span>
+                      <span key={h}>{h}</span>
                     ))}
                   </div>
                   {preview.map((row, i) => (
-                    <div key={i} style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", padding: "8px 12px", borderBottom: i < preview.length - 1 ? "0.5px solid #f1f5f9" : "none" }}>
+                    <div key={i} className="grid grid-cols-3 border-t border-slate-100 px-3 py-2 text-sm text-slate-600">
                       {Object.values(row).map((val, j) => (
-                        <span key={j} style={{ fontSize: "12px", color: "#334155" }}>{val}</span>
+                        <span key={j}>{val}</span>
                       ))}
                     </div>
                   ))}
@@ -347,46 +279,39 @@ export default function VotersPage() {
               </div>
             )}
 
-            {/* Import result */}
             {importResult && (
-              <div style={{ background: "#f0fdf4", border: "0.5px solid #bbf7d0", borderRadius: "8px", padding: "14px", marginBottom: "16px" }}>
-                <div style={{ display: "flex", gap: "20px", marginBottom: importResult.errors.length > 0 ? "10px" : "0" }}>
-                  <div style={{ textAlign: "center" }}>
-                    <div style={{ fontSize: "18px", fontWeight: 500, color: "#166534" }}>{importResult.imported}</div>
-                    <div style={{ fontSize: "11px", color: "#166534" }}>Imported</div>
+              <div className="mb-4 rounded-xl border border-emerald-200 bg-emerald-50 p-4">
+                <div className="flex flex-wrap gap-4">
+                  <div className="text-center">
+                    <div className="text-lg font-semibold text-emerald-700">{importResult.imported}</div>
+                    <div className="text-xs text-emerald-700">Imported</div>
                   </div>
-                  <div style={{ textAlign: "center" }}>
-                    <div style={{ fontSize: "18px", fontWeight: 500, color: "#854d0e" }}>{importResult.skipped}</div>
-                    <div style={{ fontSize: "11px", color: "#854d0e" }}>Skipped</div>
+                  <div className="text-center">
+                    <div className="text-lg font-semibold text-amber-700">{importResult.skipped}</div>
+                    <div className="text-xs text-amber-700">Skipped</div>
                   </div>
-                  <div style={{ textAlign: "center" }}>
-                    <div style={{ fontSize: "18px", fontWeight: 500, color: "#991b1b" }}>{importResult.failed}</div>
-                    <div style={{ fontSize: "11px", color: "#991b1b" }}>Failed</div>
+                  <div className="text-center">
+                    <div className="text-lg font-semibold text-rose-700">{importResult.failed}</div>
+                    <div className="text-xs text-rose-700">Failed</div>
                   </div>
                 </div>
-                {importResult.errors.map((e, i) => (
-                  <p key={i} style={{ fontSize: "11px", color: "#dc2626", margin: "2px 0" }}>• {e}</p>
-                ))}
+                {importResult.errors.length > 0 && (
+                  <ul className="mt-3 list-disc space-y-1 pl-5 text-sm text-slate-600">
+                    {importResult.errors.map((error, index) => (
+                      <li key={`${error}-${index}`}>{error}</li>
+                    ))}
+                  </ul>
+                )}
               </div>
             )}
 
-            {/* Actions */}
-            <div style={{ display: "flex", gap: "8px" }}>
-              <button
-                onClick={() => setShowImport(false)}
-                style={{ flex: 1, padding: "10px", borderRadius: "8px", border: "0.5px solid #e2e8f0", background: "#fff", color: "#64748b", fontSize: "13px", cursor: "pointer" }}
-              >
-                Cancel
+            <div className="flex flex-col gap-2 sm:flex-row">
+              <button onClick={() => setShowImport(false)} className="flex-1 rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm font-medium text-slate-600">
+                Close
               </button>
-              {preview.length > 0 && !importResult && (
-                <button
-                  onClick={handleImport}
-                  disabled={importing}
-                  style={{ flex: 1, padding: "10px", borderRadius: "8px", border: "none", background: "#6366f1", color: "#fff", fontSize: "13px", fontWeight: 500, cursor: "pointer" }}
-                >
-                  {importing ? "Importing..." : `Import to Level ${importLevel}`}
-                </button>
-              )}
+              <button onClick={handleImport} disabled={importing} className="flex-1 rounded-lg bg-indigo-600 px-3 py-2.5 text-sm font-semibold text-white transition hover:bg-indigo-700 disabled:opacity-70">
+                {importing ? "Importing..." : "Import CSV"}
+              </button>
             </div>
           </div>
         </div>
@@ -394,3 +319,4 @@ export default function VotersPage() {
     </div>
   );
 }
+             

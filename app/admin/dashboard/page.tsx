@@ -1,6 +1,5 @@
 "use client";
 
-
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
@@ -83,174 +82,75 @@ export default function AdminDashboard() {
   ];
 
   return (
-    <div style={{ padding: "24px" }}>
-      <div style={{ marginBottom: "24px" }}>
-        <h1
-          style={{
-            fontSize: "18px",
-            fontWeight: 500,
-            color: "#1e293b",
-            margin: "0 0 4px",
-          }}
-        >
-          Dashboard
-        </h1>
-        <p style={{ fontSize: "13px", color: "#64748b", margin: 0 }}>
+    <div className="space-y-6">
+      <div className="space-y-1">
+        <h1 className="text-xl font-semibold text-slate-800">Dashboard</h1>
+        <p className="text-sm text-slate-500">
           Overview of your election system
         </p>
       </div>
 
-      {/* Active election banner */}
       {stats?.activeElection && (
-        <div
-          style={{
-            background: "#dcfce7",
-            border: "0.5px solid #bbf7d0",
-            borderRadius: "10px",
-            padding: "14px 18px",
-            marginBottom: "20px",
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-          }}
-        >
+        <div className="flex flex-col gap-3 rounded-2xl border border-emerald-200 bg-emerald-50 p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5">
           <div>
-            <div
-              style={{
-                fontSize: "11px",
-                color: "#166534",
-                fontWeight: 500,
-                marginBottom: "2px",
-              }}
-            >
-              ACTIVE ELECTION
+            <div className="mb-1 text-[11px] font-semibold uppercase tracking-[0.24em] text-emerald-700">
+              Active election
             </div>
-            <div
-              style={{ fontSize: "14px", fontWeight: 500, color: "#14532d" }}
-            >
+            <div className="text-base font-semibold text-emerald-800">
               {stats.activeElection.title}
             </div>
-            <div
-              style={{ fontSize: "12px", color: "#166534", marginTop: "2px" }}
-            >
+            <div className="mt-1 text-sm text-emerald-700">
               Closes{" "}
               {new Date(stats.activeElection.endDate).toLocaleDateString()}
             </div>
           </div>
           <button
             onClick={() => router.push("/admin/dashboard/results")}
-            style={{
-              background: "#166534",
-              color: "#fff",
-              border: "none",
-              padding: "8px 16px",
-              borderRadius: "8px",
-              fontSize: "12px",
-              fontWeight: 500,
-              cursor: "pointer",
-            }}
+            className="rounded-lg bg-emerald-700 px-4 py-2 text-sm font-medium text-white transition hover:bg-emerald-800"
           >
             View live results →
           </button>
         </div>
       )}
 
-      {/* No active election */}
       {!loading && !stats?.activeElection && (
-        <div
-          style={{
-            background: "#fef9c3",
-            border: "0.5px solid #fde68a",
-            borderRadius: "10px",
-            padding: "14px 18px",
-            marginBottom: "20px",
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-          }}
-        >
-          <div style={{ fontSize: "13px", color: "#854d0e" }}>
+        <div className="flex flex-col gap-3 rounded-2xl border border-amber-200 bg-amber-50 p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5">
+          <div className="text-sm text-amber-800">
             No active election. Create and activate one to start voting.
           </div>
           <button
             onClick={() => router.push("/admin/dashboard/elections")}
-            style={{
-              background: "#854d0e",
-              color: "#fff",
-              border: "none",
-              padding: "8px 16px",
-              borderRadius: "8px",
-              fontSize: "12px",
-              fontWeight: 500,
-              cursor: "pointer",
-            }}
+            className="rounded-lg bg-amber-700 px-4 py-2 text-sm font-medium text-white transition hover:bg-amber-800"
           >
             Go to elections →
           </button>
         </div>
       )}
 
-      {/* Stats grid */}
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(4, 1fr)",
-          gap: "12px",
-          marginBottom: "28px",
-        }}
-      >
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
         {cards.map(({ label, value, color, bg, href }) => (
           <div
             key={label}
             onClick={() => router.push(href)}
-            style={{
-              background: "#fff",
-              border: "0.5px solid #e2e8f0",
-              borderRadius: "10px",
-              padding: "16px",
-              cursor: "pointer",
-            }}
+            className="cursor-pointer rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
           >
             <div
-              style={{
-                width: "28px",
-                height: "28px",
-                borderRadius: "6px",
-                background: bg,
-                marginBottom: "10px",
-              }}
+              className="mb-3 h-7 w-7 rounded-lg"
+              style={{ background: bg }}
             />
-            <div style={{ fontSize: "24px", fontWeight: 500, color }}>
+            <div className="text-2xl font-semibold" style={{ color }}>
               {loading ? "—" : value}
             </div>
-            <div
-              style={{ fontSize: "12px", color: "#94a3b8", marginTop: "2px" }}
-            >
-              {label}
-            </div>
+            <div className="mt-1 text-sm text-slate-400">{label}</div>
           </div>
         ))}
       </div>
 
-      {/* Quick actions */}
       <div>
-        <h2
-          style={{
-            fontSize: "14px",
-            fontWeight: 500,
-            color: "#1e293b",
-            margin: "0 0 12px",
-          }}
-        >
+        <h2 className="mb-3 text-sm font-semibold text-slate-700">
           Quick actions
         </h2>
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(3, 1fr)",
-            gap: "10px",
-          }}
-        >
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
           {[
             {
               label: "Import voters",
@@ -260,46 +160,27 @@ export default function AdminDashboard() {
             },
             {
               label: "Manage elections",
-              desc: "Create or activate an election",
+              desc: "Create, activate, or close an election",
               href: "/admin/dashboard/elections",
               icon: "🗳️",
             },
             {
-              label: "View results",
-              desc: "See live vote counts",
+              label: "Review results",
+              desc: "Track counts and winners",
               href: "/admin/dashboard/results",
-              icon: "📈",
+              icon: "📊",
             },
-          ].map(({ label, desc, href, icon }) => (
+          ].map((action) => (
             <button
-              key={label}
-              onClick={() => router.push(href)}
-              style={{
-                background: "#fff",
-                border: "0.5px solid #e2e8f0",
-                borderRadius: "10px",
-                padding: "16px",
-                textAlign: "left",
-                cursor: "pointer",
-                display: "flex",
-                gap: "12px",
-                alignItems: "flex-start",
-              }}
+              key={action.label}
+              onClick={() => router.push(action.href)}
+              className="rounded-2xl border border-slate-200 bg-white p-4 text-left shadow-sm transition hover:border-indigo-200 hover:shadow-md"
             >
-              <span style={{ fontSize: "20px" }}>{icon}</span>
-              <div>
-                <div
-                  style={{
-                    fontSize: "13px",
-                    fontWeight: 500,
-                    color: "#1e293b",
-                    marginBottom: "3px",
-                  }}
-                >
-                  {label}
-                </div>
-                <div style={{ fontSize: "12px", color: "#94a3b8" }}>{desc}</div>
+              <div className="mb-2 text-xl">{action.icon}</div>
+              <div className="text-sm font-semibold text-slate-700">
+                {action.label}
               </div>
+              <div className="mt-1 text-sm text-slate-500">{action.desc}</div>
             </button>
           ))}
         </div>

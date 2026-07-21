@@ -3,6 +3,7 @@
 export const dynamic = "force-dynamic";
 
 import { useState, useEffect } from "react";
+import styles from "../adminPage.module.css";
 
 type Election = { _id: string; title: string; status: string };
 type CandidateResult = { _id: string; name: string; studentId?: string; votes: number; percentage: number };
@@ -49,10 +50,10 @@ export default function ResultsPage() {
   };
 
   return (
-    <div style={{ padding: "24px", background: "#f8fafc", minHeight: "100vh" }}>
+    <div className={styles.page}>
 
       {/* Header */}
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "24px" }}>
+      <div className={styles.header}>
         <div>
           <h1 style={{ fontSize: "18px", fontWeight: 500, color: "#1e293b", margin: "0 0 4px" }}>Results</h1>
           <p style={{ fontSize: "13px", color: "#64748b", margin: 0 }}>View election results and vote counts</p>
@@ -62,6 +63,7 @@ export default function ResultsPage() {
         <select
           value={selectedId}
           onChange={(e) => setSelectedId(e.target.value)}
+          className={styles.electionSelector}
           style={{ padding: "8px 12px", border: "0.5px solid #e2e8f0", borderRadius: "8px", fontSize: "13px", background: "#fff", color: "#1e293b", cursor: "pointer" }}
         >
           {elections.map((e) => (
@@ -76,7 +78,7 @@ export default function ResultsPage() {
         <>
           {/* Stats row */}
           {stats && (
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "12px", marginBottom: "24px" }}>
+            <div className={styles.statsGrid}>
               {[
                 { label: "Registered voters", value: stats.totalVoters, color: "#6366f1", bg: "#eef2ff" },
                 { label: "Votes cast", value: stats.totalVoted, color: "#166534", bg: "#dcfce7" },
@@ -105,7 +107,7 @@ export default function ResultsPage() {
               <div key={result.position._id} style={{ background: "#fff", border: "0.5px solid #e2e8f0", borderRadius: "12px", overflow: "hidden" }}>
 
                 {/* Position header */}
-                <div style={{ padding: "16px 20px", borderBottom: "0.5px solid #f1f5f9", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                <div className={styles.resultHeader} style={{ padding: "16px 20px", borderBottom: "0.5px solid #f1f5f9" }}>
                   <span style={{ fontSize: "15px", fontWeight: 500, color: "#1e293b" }}>{result.position.title}</span>
                   <span style={{ fontSize: "12px", color: "#94a3b8" }}>{result.totalVotes} votes cast</span>
                 </div>
@@ -116,12 +118,12 @@ export default function ResultsPage() {
                     const isWinner = result.winner?._id === candidate._id && result.totalVotes > 0;
                     return (
                       <div key={candidate._id}>
-                        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "6px" }}>
-                          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                        <div className={styles.candidateRow} style={{ marginBottom: "6px" }}>
+                          <div className={styles.candidateDetails}>
                             {isWinner && (
                               <span style={{ fontSize: "14px" }}>🏆</span>
                             )}
-                            <div>
+                            <div className={styles.candidateIdentity}>
                               <span style={{ fontSize: "13px", fontWeight: isWinner ? 600 : 400, color: "#1e293b" }}>
                                 {candidate.name}
                               </span>
