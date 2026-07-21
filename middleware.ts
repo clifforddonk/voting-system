@@ -11,6 +11,7 @@ export async function middleware(req: NextRequest) {
   const token = await getToken({
     req,
     secret,
+    secureCookie: process.env.NODE_ENV === "production",
   });
 
   // Protect /admin routes
