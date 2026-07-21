@@ -1,16 +1,45 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+
+const stats = [
+  { num: "5", label: "Open positions" },
+  { num: "12", label: "Candidates" },
+  { num: "842", label: "Registered voters" },
+  { num: "73%", label: "Voted so far" },
+];
+
+const benefits = [
+  {
+    icon: "🔒",
+    title: "Secure",
+    desc: "Invite-only access. Only registered students can vote, verified by email.",
+  },
+  {
+    icon: "🗳️",
+    title: "One vote per student",
+    desc: "The system prevents duplicate votes at the database level — not just the UI.",
+  },
+  {
+    icon: "📊",
+    title: "Live results",
+    desc: "Results are published immediately after voting closes with full transparency.",
+  },
+];
 
 export default function LandingPage() {
   const router = useRouter();
-  const [timeLeft, setTimeLeft] = useState({ hours: 47, minutes: 58, seconds: 30 });
+  const [timeLeft, setTimeLeft] = useState({
+    hours: 47,
+    minutes: 58,
+    seconds: 30,
+  });
 
   useEffect(() => {
     const timer = setInterval(() => {
       setTimeLeft((prev) => {
-        let { hours, minutes, seconds } = prev;
+        const { hours, minutes, seconds } = prev;
         if (seconds > 0) return { hours, minutes, seconds: seconds - 1 };
         if (minutes > 0) return { hours, minutes: minutes - 1, seconds: 59 };
         if (hours > 0) return { hours: hours - 1, minutes: 59, seconds: 59 };
@@ -18,239 +47,132 @@ export default function LandingPage() {
         return prev;
       });
     }, 1000);
+
     return () => clearInterval(timer);
   }, []);
 
-  const pad = (n: number) => String(n).padStart(2, "0");
+  const pad = (value: number) => String(value).padStart(2, "0");
+  const signIn = () => router.push("/auth/login");
 
   return (
-    <div style={{ minHeight: "100vh", background: "#f8fafc", fontFamily: "system-ui, sans-serif" }}>
-
-      {/* Navbar */}
-      <nav style={{
-        background: "#fff",
-        borderBottom: "0.5px solid #e2e8f0",
-        padding: "0 32px",
-        height: "56px",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        position: "sticky",
-        top: 0,
-        zIndex: 50,
-      }}>
-        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-          <div style={{ width: "8px", height: "8px", borderRadius: "50%", background: "#6366f1" }} />
-          <span style={{ fontWeight: 500, fontSize: "15px", color: "#1e293b" }}>QuickVote</span>
+    <div className="min-h-screen overflow-x-hidden bg-slate-50 font-sans text-slate-800">
+      <nav className="sticky top-0 z-50 flex h-14 items-center justify-between border-b border-slate-200 bg-white px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center gap-2">
+          <span className="h-2 w-2 rounded-full bg-indigo-500" />
+          <span className="text-sm font-medium text-slate-800 sm:text-[15px]">
+            QuickVote
+          </span>
         </div>
         <button
-          onClick={() => router.push("/auth/login")}
-          style={{
-            background: "#6366f1",
-            color: "#fff",
-            border: "none",
-            padding: "8px 20px",
-            borderRadius: "8px",
-            fontSize: "13px",
-            fontWeight: 500,
-            cursor: "pointer",
-          }}
+          onClick={signIn}
+          className="rounded-lg bg-indigo-500 px-4 py-2 text-xs font-medium text-white transition-colors hover:bg-indigo-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 sm:px-5 sm:text-sm"
         >
           Sign in
         </button>
       </nav>
 
-      {/* Hero */}
-      <div style={{
-        background: "linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)",
-        padding: "64px 32px 56px",
-        textAlign: "center",
-        position: "relative",
-        overflow: "hidden",
-      }}>
-        <div style={{
-          position: "absolute", top: "-60px", right: "-60px",
-          width: "240px", height: "240px", borderRadius: "50%",
-          background: "rgba(255,255,255,0.05)",
-        }} />
-        <div style={{
-          position: "absolute", bottom: "-80px", left: "-40px",
-          width: "200px", height: "200px", borderRadius: "50%",
-          background: "rgba(255,255,255,0.04)",
-        }} />
+      <section className="relative isolate overflow-hidden bg-linear-to-br from-indigo-500 to-indigo-700 px-4 py-12 text-center sm:px-6 sm:py-16 lg:py-20">
+        <div className="absolute -right-16 -top-16 -z-10 h-60 w-60 rounded-full bg-white/5" />
+        <div className="absolute -bottom-20 -left-10 -z-10 h-52 w-52 rounded-full bg-white/5" />
 
-        <div style={{
-          display: "inline-block",
-          background: "rgba(255,255,255,0.15)",
-          color: "#e0e7ff",
-          fontSize: "11px",
-          fontWeight: 500,
-          padding: "4px 14px",
-          borderRadius: "20px",
-          marginBottom: "16px",
-          border: "0.5px solid rgba(255,255,255,0.2)",
-          letterSpacing: "0.04em",
-        }}>
-          2024 / 2025 ACADEMIC YEAR
-        </div>
-
-        <h1 style={{ color: "#fff", fontSize: "32px", fontWeight: 500, margin: "0 0 10px", lineHeight: 1.2 }}>
-          Departmental Elections
-        </h1>
-        <p style={{ color: "#c7d2fe", fontSize: "14px", margin: "0 0 32px", maxWidth: "400px", marginLeft: "auto", marginRight: "auto" }}>
-          Your vote shapes the leadership of your department. Every vote counts.
-        </p>
-
-        <button
-          onClick={() => router.push("/auth/login")}
-          style={{
-            background: "#fff",
-            color: "#4f46e5",
-            border: "none",
-            padding: "12px 32px",
-            borderRadius: "8px",
-            fontSize: "14px",
-            fontWeight: 500,
-            cursor: "pointer",
-          }}
-        >
-          Sign in to vote →
-        </button>
-
-        {/* Countdown */}
-        <div style={{ marginTop: "40px" }}>
-          <p style={{ color: "#a5b4fc", fontSize: "11px", marginBottom: "12px", letterSpacing: "0.06em" }}>
-            VOTING CLOSES IN
+        <div className="mx-auto max-w-2xl">
+          <span className="inline-block rounded-full border border-white/20 bg-white/15 px-3.5 py-1 text-[10px] font-medium tracking-wider text-indigo-100 sm:text-xs">
+            2024 / 2025 ACADEMIC YEAR
+          </span>
+          <h1 className="mt-4 text-3xl font-medium leading-tight text-white sm:text-4xl lg:text-5xl">
+            Departmental Elections
+          </h1>
+          <p className="mx-auto mt-3 max-w-md text-sm leading-6 text-indigo-100 sm:text-base">
+            Your vote shapes the leadership of your department. Every vote counts.
           </p>
-          <div style={{ display: "flex", justifyContent: "center", gap: "12px" }}>
-            {[
-              { val: pad(timeLeft.hours), label: "hours" },
-              { val: pad(timeLeft.minutes), label: "minutes" },
-              { val: pad(timeLeft.seconds), label: "seconds" },
-            ].map(({ val, label }) => (
-              <div key={label} style={{
-                background: "rgba(255,255,255,0.12)",
-                border: "0.5px solid rgba(255,255,255,0.2)",
-                borderRadius: "8px",
-                padding: "12px 20px",
-                minWidth: "64px",
-              }}>
-                <div style={{ color: "#fff", fontSize: "24px", fontWeight: 500, lineHeight: 1 }}>{val}</div>
-                <div style={{ color: "#a5b4fc", fontSize: "10px", marginTop: "4px" }}>{label}</div>
-              </div>
-            ))}
+          <button
+            onClick={signIn}
+            className="mt-7 rounded-lg bg-white px-6 py-3 text-sm font-medium text-indigo-700 shadow-sm transition-colors hover:bg-indigo-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white sm:px-8"
+          >
+            Sign in to vote →
+          </button>
+
+          <div className="mt-9 sm:mt-10">
+            <p className="mb-3 text-[10px] font-medium tracking-widest text-indigo-200 sm:text-xs">
+              VOTING CLOSES IN
+            </p>
+            <div className="mx-auto grid max-w-xs grid-cols-3 gap-2 sm:max-w-sm sm:gap-3">
+              {[
+                { val: pad(timeLeft.hours), label: "hours" },
+                { val: pad(timeLeft.minutes), label: "minutes" },
+                { val: pad(timeLeft.seconds), label: "seconds" },
+              ].map(({ val, label }) => (
+                <div
+                  key={label}
+                  className="rounded-lg border border-white/20 bg-white/12 px-2 py-3 sm:px-4"
+                >
+                  <div className="text-2xl font-medium leading-none text-white sm:text-3xl">
+                    {val}
+                  </div>
+                  <div className="mt-1 text-[10px] text-indigo-200 sm:text-xs">
+                    {label}
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
-      </div>
+      </section>
 
-      {/* Stats bar */}
-      <div style={{
-        background: "#fff",
-        borderBottom: "0.5px solid #e2e8f0",
-        padding: "20px 32px",
-        display: "flex",
-        justifyContent: "center",
-      }}>
-        {[
-          { num: "5", label: "Open positions" },
-          { num: "12", label: "Candidates" },
-          { num: "842", label: "Registered voters" },
-          { num: "73%", label: "Voted so far" },
-        ].map(({ num, label }, i, arr) => (
-          <div key={label} style={{
-            textAlign: "center",
-            padding: "0 36px",
-            borderRight: i < arr.length - 1 ? "0.5px solid #e2e8f0" : "none",
-          }}>
-            <div style={{ fontSize: "22px", fontWeight: 500, color: "#1e293b" }}>{num}</div>
-            <div style={{ fontSize: "12px", color: "#94a3b8", marginTop: "2px" }}>{label}</div>
-          </div>
-        ))}
-      </div>
-
-      {/* Trust cards */}
-      <div style={{ padding: "48px 32px", maxWidth: "860px", margin: "0 auto" }}>
-        <p style={{ textAlign: "center", fontSize: "11px", fontWeight: 500, color: "#6366f1", letterSpacing: "0.08em", marginBottom: "8px" }}>
-          WHY VOTE ONLINE
-        </p>
-        <h2 style={{ textAlign: "center", fontSize: "20px", fontWeight: 500, color: "#1e293b", margin: "0 0 32px" }}>
-          Built for fair, transparent elections
-        </h2>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "16px" }}>
-          {[
-            { icon: "🔒", title: "Secure", desc: "Invite-only access. Only registered students can vote, verified by email." },
-            { icon: "🗳️", title: "One vote per student", desc: "The system prevents duplicate votes at the database level — not just the UI." },
-            { icon: "📊", title: "Live results", desc: "Results are published immediately after voting closes with full transparency." },
-          ].map(({ icon, title, desc }) => (
-            <div key={title} style={{
-              background: "#fff",
-              border: "0.5px solid #e2e8f0",
-              borderRadius: "12px",
-              padding: "20px",
-            }}>
-              <div style={{
-                width: "40px", height: "40px", borderRadius: "10px",
-                background: "#eef2ff", display: "flex", alignItems: "center",
-                justifyContent: "center", fontSize: "18px", marginBottom: "12px",
-              }}>
-                {icon}
-              </div>
-              <div style={{ fontWeight: 500, fontSize: "14px", color: "#1e293b", marginBottom: "6px" }}>{title}</div>
-              <div style={{ fontSize: "13px", color: "#64748b", lineHeight: 1.6 }}>{desc}</div>
+      <section className="border-b border-slate-200 bg-white px-4 py-2 sm:px-6 sm:py-5">
+        <div className="mx-auto grid max-w-4xl grid-cols-2 divide-x divide-y divide-slate-200 sm:grid-cols-4 sm:divide-y-0">
+          {stats.map(({ num, label }) => (
+            <div key={label} className="px-3 py-4 text-center sm:px-5">
+              <div className="text-xl font-medium text-slate-800 sm:text-2xl">{num}</div>
+              <div className="mt-1 text-xs text-slate-400">{label}</div>
             </div>
           ))}
         </div>
-      </div>
+      </section>
 
-      {/* CTA Banner */}
-      <div style={{
-        background: "#6366f1",
-        margin: "0 32px 48px",
-        borderRadius: "16px",
-        padding: "36px 40px",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        maxWidth: "796px",
-        marginLeft: "auto",
-        marginRight: "auto",
-      }}>
-        <div>
-          <div style={{ color: "#e0e7ff", fontSize: "13px", marginBottom: "6px" }}>Ready to vote?</div>
-          <div style={{ color: "#fff", fontSize: "20px", fontWeight: 500 }}>Your ballot is waiting for you.</div>
+      <section className="mx-auto max-w-5xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8">
+        <p className="text-center text-[11px] font-medium tracking-widest text-indigo-500">
+          WHY VOTE ONLINE
+        </p>
+        <h2 className="mt-2 text-center text-xl font-medium text-slate-800 sm:text-2xl">
+          Built for fair, transparent elections
+        </h2>
+        <div className="mt-7 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {benefits.map(({ icon, title, desc }) => (
+            <article key={title} className="rounded-xl border border-slate-200 bg-white p-5 sm:p-6">
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-indigo-50 text-lg">
+                {icon}
+              </div>
+              <h3 className="mt-4 text-sm font-medium text-slate-800">{title}</h3>
+              <p className="mt-1.5 text-sm leading-6 text-slate-500">{desc}</p>
+            </article>
+          ))}
         </div>
-        <button
-          onClick={() => router.push("/auth/login")}
-          style={{
-            background: "#fff",
-            color: "#4f46e5",
-            border: "none",
-            padding: "11px 28px",
-            borderRadius: "8px",
-            fontSize: "13px",
-            fontWeight: 500,
-            cursor: "pointer",
-            flexShrink: 0,
-          }}
-        >
-          Sign in to vote →
-        </button>
-      </div>
+      </section>
 
-      {/* Footer */}
-      <footer style={{
-        borderTop: "0.5px solid #e2e8f0",
-        padding: "20px 32px",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        background: "#fff",
-      }}>
-        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-          <div style={{ width: "6px", height: "6px", borderRadius: "50%", background: "#6366f1" }} />
-          <span style={{ fontSize: "13px", color: "#64748b" }}>QuickVote</span>
+      <section className="mx-4 mb-12 rounded-2xl bg-indigo-500 px-5 py-7 sm:mx-6 sm:px-8 sm:py-9 lg:mx-auto lg:max-w-4xl lg:px-10">
+        <div className="flex flex-col items-start gap-5 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <p className="text-sm text-indigo-100">Ready to vote?</p>
+            <h2 className="mt-1 text-xl font-medium text-white sm:text-2xl">
+              Your ballot is waiting for you.
+            </h2>
+          </div>
+          <button
+            onClick={signIn}
+            className="w-full rounded-lg bg-white px-6 py-3 text-sm font-medium text-indigo-700 transition-colors hover:bg-indigo-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white sm:w-auto"
+          >
+            Sign in to vote →
+          </button>
         </div>
-        <span style={{ fontSize: "12px", color: "#94a3b8" }}>
+      </section>
+
+      <footer className="flex flex-col gap-3 border-t border-slate-200 bg-white px-4 py-5 text-center sm:flex-row sm:items-center sm:justify-between sm:px-6 sm:text-left lg:px-8">
+        <div className="flex items-center justify-center gap-2 sm:justify-start">
+          <span className="h-1.5 w-1.5 rounded-full bg-indigo-500" />
+          <span className="text-sm text-slate-500">QuickVote</span>
+        </div>
+        <span className="text-xs text-slate-400">
           Nursing Department · {new Date().getFullYear()}
         </span>
       </footer>
