@@ -16,6 +16,19 @@ export async function GET(req: NextRequest) {
 
     await connectDB();
 
+    // Keep the display status aligned with the actual account state. The boolean
+    // is the source of truth because it controls whether the voter can log in.
+    await Promise.all([
+      User.updateMany(
+        { role: "voter", activated: true, inviteStatus: { $ne: "activated" } },
+        { $set: { inviteStatus: "activated" } },
+      ),
+      User.updateMany(
+        { role: "voter", activated: false, inviteStatus: "activated" },
+        { $set: { inviteStatus: "invited" } },
+      ),
+    ]);
+
     const filter: Record<string, unknown> = { role: "voter" };
     if (level && level !== "all") filter.level = level;
     if (search) {
@@ -27,7 +40,7 @@ export async function GET(req: NextRequest) {
     }
 
     const [voters, stats] = await Promise.all([
-      User.find(filter).select("-password -inviteToken -inviteTokenExpiry").sort({ createdAt: -1 }),
+      User.find(filter).select("-password -inviteToken -inviteTokenExpiry").sort({ createdAt: -1 }).lean(),
       User.aggregate([
         { $match: { role: "voter" } },
         {
@@ -36,16 +49,20 @@ export async function GET(req: NextRequest) {
             total: { $sum: 1 },
             pending: { $sum: { $cond: [{ $eq: ["$inviteStatus", "pending"] }, 1, 0] } },
             invited: { $sum: { $cond: [{ $eq: ["$inviteStatus", "invited"] }, 1, 0] } },
-            activated: { $sum: { $cond: [{ $eq: ["$inviteStatus", "activated"] }, 1, 0] } },
-            voted: { $sum: { $cond: [{ $eq: ["$inviteStatus", "voted"] }, 1, 0] } },
+            activated: { $sum: { $cond: ["$activated", 1, 0] } },
           },
         },
       ]),
     ]);
 
     return NextResponse.json({
-      voters,
-      stats: stats[0] || { total: 0, pending: 0, invited: 0, activated: 0, voted: 0 },
+      voters: voters.map((voter) => ({
+        ...voter,
+        // The table exposes only the two meaningful account states. Pending voters
+        // remain eligible for invitation internally, but are shown as invited.
+        inviteStatus: voter.activated ? "activated" : "invited",
+      })),
+      stats: stats[0] || { total: 0, pending: 0, invited: 0, activated: 0 },
     });
   } catch (err) {
     console.error(err);

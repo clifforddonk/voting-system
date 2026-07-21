@@ -26,6 +26,8 @@ export default function ElectionsPage() {
   const [elections, setElections] = useState<Election[]>([]);
   const [loading, setLoading] = useState(true);
   const [showCreate, setShowCreate] = useState(false);
+  const [extendingElection, setExtendingElection] = useState<Election | null>(null);
+  const [extensionEndDate, setExtensionEndDate] = useState("");
   const [form, setForm] = useState({ title: "", description: "", startDate: "", endDate: "" });
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
@@ -71,6 +73,26 @@ export default function ElectionsPage() {
   async function handleDelete(id: string) {
     if (!confirm("Delete this election? This cannot be undone.")) return;
     await fetch(`/api/admin/elections/${id}`, { method: "DELETE" });
+    fetchElections();
+  }
+
+  async function handleExtend() {
+    if (!extendingElection || !extensionEndDate) return;
+    setError("");
+    setSaving(true);
+    const res = await fetch(`/api/admin/elections/${extendingElection._id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ endDate: extensionEndDate }),
+    });
+    const data = await res.json();
+    setSaving(false);
+    if (!res.ok) {
+      setError(data.error || "Unable to extend this election");
+      return;
+    }
+    setExtendingElection(null);
+    setExtensionEndDate("");
     fetchElections();
   }
 
@@ -148,6 +170,19 @@ export default function ElectionsPage() {
                 {/* End */}
                 {election.status === "active" && (
                   <button
+                    onClick={() => {
+                      setError("");
+                      setExtendingElection(election);
+                      setExtensionEndDate("");
+                    }}
+                    style={{ background: "#eef2ff", border: "none", color: "#4338ca", padding: "7px 14px", borderRadius: "8px", fontSize: "12px", fontWeight: 500, cursor: "pointer" }}
+                  >
+                    Extend time
+                  </button>
+                )}
+
+                {election.status === "active" && (
+                  <button
                     onClick={() => handleStatusChange(election._id, "ended")}
                     style={{ background: "#fee2e2", border: "none", color: "#991b1b", padding: "7px 14px", borderRadius: "8px", fontSize: "12px", fontWeight: 500, cursor: "pointer" }}
                   >
@@ -205,6 +240,44 @@ export default function ElectionsPage() {
               </button>
               <button onClick={handleCreate} disabled={saving} style={{ flex: 1, padding: "10px", borderRadius: "8px", border: "none", background: "#6366f1", color: "#fff", fontSize: "13px", fontWeight: 500, cursor: "pointer" }}>
                 {saving ? "Creating..." : "Create election"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Extend-election modal */}
+      {extendingElection && (
+        <div className={styles.modalBackdrop}>
+          <div className={styles.modal} style={{ background: "#fff", borderRadius: "16px", padding: "28px" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
+              <div>
+                <h2 style={{ fontSize: "16px", fontWeight: 500, color: "#1e293b", margin: 0 }}>Extend election time</h2>
+                <p style={{ fontSize: "12px", color: "#64748b", margin: "4px 0 0" }}>{extendingElection.title}</p>
+              </div>
+              <button onClick={() => setExtendingElection(null)} style={{ background: "none", border: "none", fontSize: "18px", cursor: "pointer", color: "#94a3b8" }}>âœ•</button>
+            </div>
+
+            <div style={{ marginBottom: "14px" }}>
+              <label style={{ display: "block", fontSize: "12px", fontWeight: 500, color: "#475569", marginBottom: "5px" }}>New end date and time</label>
+              <input
+                type="datetime-local"
+                value={extensionEndDate}
+                onChange={(e) => setExtensionEndDate(e.target.value)}
+                min={new Date().toISOString().slice(0, 16)}
+                style={{ width: "100%", boxSizing: "border-box", padding: "8px 12px", border: "0.5px solid #e2e8f0", borderRadius: "8px", fontSize: "13px", background: "#f8fafc", color: "#1e293b" }}
+              />
+              <p style={{ fontSize: "11px", color: "#94a3b8", margin: "6px 0 0" }}>
+                The new time must be later than the current deadline: {new Date(extendingElection.endDate).toLocaleString()}.
+              </p>
+            </div>
+
+            {error && <p style={{ color: "#dc2626", fontSize: "12px", marginBottom: "12px" }}>{error}</p>}
+
+            <div style={{ display: "flex", gap: "8px" }}>
+              <button onClick={() => setExtendingElection(null)} style={{ flex: 1, padding: "10px", borderRadius: "8px", border: "0.5px solid #e2e8f0", background: "#fff", color: "#64748b", fontSize: "13px", cursor: "pointer" }}>Cancel</button>
+              <button onClick={handleExtend} disabled={saving || !extensionEndDate} style={{ flex: 1, padding: "10px", borderRadius: "8px", border: "none", background: "#6366f1", color: "#fff", fontSize: "13px", fontWeight: 500, cursor: "pointer" }}>
+                {saving ? "Extending..." : "Extend election"}
               </button>
             </div>
           </div>

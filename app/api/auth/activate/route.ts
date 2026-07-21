@@ -50,6 +50,7 @@ export async function POST(req: NextRequest) {
     await User.findByIdAndUpdate(user._id, {
       password: hashedPassword,
       activated: true,
+      inviteStatus: "activated",
       inviteToken: undefined,
       inviteTokenExpiry: undefined,
     });

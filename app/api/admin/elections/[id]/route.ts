@@ -3,6 +3,7 @@ import { connectDB } from "@/lib/mongodb";
 import { Election } from "@/models/Election";
 import { auth } from "@/auth";
 import { z } from "zod";
+import { closeExpiredElections } from "@/lib/electionLifecycle";
 
 const updateSchema = z.object({
   title: z.string().min(1).optional(),
@@ -11,6 +12,27 @@ const updateSchema = z.object({
   endDate: z.string().optional(),
   status: z.enum(["draft", "active", "ended"]).optional(),
 });
+
+export async function GET(
+  _req: NextRequest,
+  { params }: { params: Promise<{ id: string }> },
+) {
+  const { id } = await params;
+  try {
+    const session = await auth();
+    if (!session || session.user.role !== "admin") {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    await connectDB();
+    await closeExpiredElections();
+    const election = await Election.findById(id);
+    if (!election) return NextResponse.json({ error: "Election not found" }, { status: 404 });
+    return NextResponse.json({ election });
+  } catch {
+    return NextResponse.json({ error: "Failed to fetch election" }, { status: 500 });
+  }
+}
 
 export async function PATCH(
   req: NextRequest,
@@ -33,6 +55,42 @@ export async function PATCH(
     }
 
     await connectDB();
+    await closeExpiredElections();
+
+    const currentElection = await Election.findById(id);
+    if (!currentElection) {
+      return NextResponse.json({ error: "Election not found" }, { status: 404 });
+    }
+
+    const isEndingActiveElection =
+      currentElection.status === "active" &&
+      parsed.data.status === "ended" &&
+      Object.keys(parsed.data).length === 1;
+
+    const extendedEndDate = parsed.data.endDate ? new Date(parsed.data.endDate) : null;
+    const isExtensionRequest =
+      currentElection.status === "active" &&
+      extendedEndDate !== null &&
+      Object.keys(parsed.data).length === 1;
+    const isExtendingActiveElection =
+      isExtensionRequest &&
+      extendedEndDate !== null &&
+      extendedEndDate > new Date() &&
+      extendedEndDate > currentElection.endDate;
+
+    if (isExtensionRequest && !isExtendingActiveElection) {
+      return NextResponse.json(
+        { error: "The new end time must be later than both now and the current deadline" },
+        { status: 400 },
+      );
+    }
+
+    if (currentElection.status !== "draft" && !isEndingActiveElection && !isExtendingActiveElection) {
+      return NextResponse.json(
+        { error: "An election cannot be changed after it has started" },
+        { status: 409 },
+      );
+    }
 
     // If activating this election, end all others first
     if (parsed.data.status === "active") {
@@ -79,7 +137,14 @@ export async function DELETE(
     }
 
     await connectDB();
-    await Election.findByIdAndDelete(id);
+    await closeExpiredElections();
+    const election = await Election.findOneAndDelete({ _id: id, status: "draft" });
+    if (!election) {
+      return NextResponse.json(
+        { error: "Only draft elections can be deleted" },
+        { status: 409 },
+      );
+    }
     return NextResponse.json({ success: true });
   } catch {
     return NextResponse.json({ error: "Failed to delete" }, { status: 500 });

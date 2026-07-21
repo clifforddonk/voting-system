@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { connectDB } from "@/lib/mongodb";
 import { Candidate } from "@/models/Candidate";
+import { Election } from "@/models/Election";
 import { auth } from "@/auth";
 import { z } from "zod";
 
@@ -41,6 +42,10 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     }
 
     await connectDB();
+    const election = await Election.findOne({ _id: id, status: "draft" });
+    if (!election) {
+      return NextResponse.json({ error: "Election setup is locked once voting has started" }, { status: 409 });
+    }
     const candidate = await Candidate.create({ ...parsed.data, electionId: id });
     return NextResponse.json({ candidate }, { status: 201 });
   } catch {

@@ -8,7 +8,7 @@ export interface IUser extends Document {
   role: "admin" | "voter";
   activated: boolean;
   level?: "100" | "200" | "300" | "400";
-  inviteStatus: "pending" | "invited" | "activated" | "voted";
+  inviteStatus: "pending" | "invited" | "activated";
   inviteToken?: string;
   inviteTokenExpiry?: Date;
   createdAt: Date;
@@ -25,7 +25,7 @@ const UserSchema = new Schema<IUser>(
     level: { type: String, enum: ["100", "200", "300", "400"] },
     inviteStatus: {
       type: String,
-      enum: ["pending", "invited", "activated", "voted"],
+      enum: ["pending", "invited", "activated"],
       default: "pending",
     },
     inviteToken: { type: String },

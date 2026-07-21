@@ -4,8 +4,8 @@ import { Election } from "@/models/Election";
 import { Position } from "@/models/Position";
 import { Candidate } from "@/models/Candidate";
 import { Vote } from "@/models/Vote";
-import { User } from "@/models/User";
 import { auth } from "@/auth";
+import { closeExpiredElections } from "@/lib/electionLifecycle";
 import { z } from "zod";
 
 const submitSchema = z.object({
@@ -32,11 +32,18 @@ export async function POST(req: NextRequest) {
     const { electionId, votes } = parsed.data;
 
     await connectDB();
+    await closeExpiredElections();
 
-    // Verify election is still active
-    const election = await Election.findOne({ _id: electionId, status: "active" });
+    // Verify election is active and still inside its voting window.
+    const now = new Date();
+    const election = await Election.findOne({
+      _id: electionId,
+      status: "active",
+      startDate: { $lte: now },
+      endDate: { $gt: now },
+    });
     if (!election) {
-      return NextResponse.json({ error: "Election is not active" }, { status: 400 });
+      return NextResponse.json({ error: "This election is not currently open for voting" }, { status: 400 });
     }
 
     // Verify voter hasn't already voted
@@ -75,9 +82,6 @@ export async function POST(req: NextRequest) {
         voterId: session.user.id,
       }))
     );
-
-    // Update voter status
-    await User.findByIdAndUpdate(session.user.id, { inviteStatus: "voted" });
 
     return NextResponse.json({ success: true });
   } catch (err: any) {

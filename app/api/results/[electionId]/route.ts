@@ -6,6 +6,7 @@ import { Candidate } from "@/models/Candidate";
 import { Vote } from "@/models/Vote";
 import { User } from "@/models/User";
 import { auth } from "@/auth";
+import { closeExpiredElections } from "@/lib/electionLifecycle";
 
 export async function GET(
   _req: NextRequest,
@@ -19,6 +20,7 @@ export async function GET(
 
     const { electionId } = await params;
     await connectDB();
+    await closeExpiredElections();
 
     const election = await Election.findById(electionId);
     if (!election) {

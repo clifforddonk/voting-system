@@ -29,18 +29,17 @@ export default function AdminDashboard() {
       ]);
 
       const activeElection = electionsData.elections?.find(
-        (e: { status: string }) => e.status === "active",
+        (e: { _id: string; status: string }) => e.status === "active",
       );
+
+      const resultsData = activeElection
+        ? await fetch(`/api/results/${activeElection._id}`).then((response) => response.json())
+        : null;
 
       setStats({
         totalVoters: votersData.stats?.total || 0,
-        totalVoted: votersData.stats?.voted || 0,
-        turnout:
-          votersData.stats?.total > 0
-            ? Math.round(
-                (votersData.stats.voted / votersData.stats.total) * 100,
-              )
-            : 0,
+        totalVoted: resultsData?.stats?.totalVoted || 0,
+        turnout: resultsData?.stats?.turnout || 0,
         activeElection: activeElection || null,
         pending: votersData.stats?.pending || 0,
         invited: votersData.stats?.invited || 0,

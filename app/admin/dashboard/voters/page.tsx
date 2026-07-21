@@ -11,7 +11,7 @@ type Voter = {
   email: string;
   studentId?: string;
   level?: string;
-  inviteStatus: "pending" | "invited" | "activated" | "voted";
+  inviteStatus: "invited" | "activated";
 };
 
 type Stats = {
@@ -19,7 +19,6 @@ type Stats = {
   pending: number;
   invited: number;
   activated: number;
-  voted: number;
 };
 
 const LEVELS = ["all", "100", "200", "300", "400"] as const;
@@ -30,14 +29,11 @@ const emptyStats: Stats = {
   pending: 0,
   invited: 0,
   activated: 0,
-  voted: 0,
 };
 
 const statusColors: Record<string, { bg: string; color: string }> = {
-  pending: { bg: "#f1f5f9", color: "#64748b" },
   invited: { bg: "#dbeafe", color: "#1e40af" },
   activated: { bg: "#dcfce7", color: "#166534" },
-  voted: { bg: "#ede9fe", color: "#5b21b6" },
 };
 
 export default function VotersPage() {

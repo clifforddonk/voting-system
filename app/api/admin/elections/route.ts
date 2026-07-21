@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { connectDB } from "@/lib/mongodb";
 import { Election } from "@/models/Election";
+import { closeExpiredElections } from "@/lib/electionLifecycle";
 import { auth } from "@/auth";
 import { z } from "zod";
 
@@ -9,7 +10,10 @@ const electionSchema = z.object({
   description: z.string().optional(),
   startDate: z.string(),
   endDate: z.string(),
-});
+}).refine(
+  ({ startDate, endDate }) => new Date(endDate) > new Date(startDate),
+  { message: "End date must be after the start date", path: ["endDate"] },
+);
 
 // GET — list all elections
 export async function GET() {
@@ -19,6 +23,7 @@ export async function GET() {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
     await connectDB();
+    await closeExpiredElections();
     const elections = await Election.find().sort({ createdAt: -1 });
     return NextResponse.json({ elections });
   } catch {

@@ -5,6 +5,7 @@ import { Position } from "@/models/Position";
 import { Candidate } from "@/models/Candidate";
 import { Vote } from "@/models/Vote";
 import { auth } from "@/auth";
+import { closeExpiredElections } from "@/lib/electionLifecycle";
 
 export async function GET() {
   try {
@@ -14,8 +15,14 @@ export async function GET() {
     }
 
     await connectDB();
+    await closeExpiredElections();
 
-    const election = await Election.findOne({ status: "active" });
+    const now = new Date();
+    const election = await Election.findOne({
+      status: "active",
+      startDate: { $lte: now },
+      endDate: { $gt: now },
+    });
     if (!election) {
       return NextResponse.json({ error: "No active election" }, { status: 404 });
     }
