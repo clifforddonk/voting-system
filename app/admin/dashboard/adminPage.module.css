@@ -1,0 +1,168 @@
+.page {
+  padding: 24px;
+  background: #f8fafc;
+  min-height: 100vh;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.headerAction,
+.electionSelector {
+  flex-shrink: 0;
+}
+
+.electionCard {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.electionDetails {
+  flex: 1;
+  min-width: 0;
+}
+
+.electionTitleRow,
+.resultHeader,
+.candidateRow,
+.candidateDetails,
+.candidateIdentity,
+.actions {
+  display: flex;
+  align-items: center;
+}
+
+.electionTitleRow {
+  gap: 10px;
+}
+
+.actions {
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.resultHeader,
+.candidateRow {
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.candidateDetails,
+.candidateIdentity {
+  gap: 10px;
+  min-width: 0;
+}
+
+.modalBackdrop {
+  position: fixed;
+  inset: 0;
+  padding: 16px;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.modal {
+  width: 100%;
+  max-width: 460px;
+  max-height: calc(100dvh - 32px);
+  overflow-y: auto;
+}
+
+@media (max-width: 640px) {
+  .page {
+    padding: 16px;
+  }
+
+  .header {
+    flex-direction: column;
+    align-items: stretch;
+    margin-bottom: 20px;
+  }
+
+  .headerAction,
+  .electionSelector {
+    width: 100%;
+  }
+
+  .electionCard {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .electionTitleRow {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    width: 100%;
+  }
+
+  .actions button {
+    width: 100%;
+  }
+
+  .actions button:last-child:nth-child(3) {
+    grid-column: span 2;
+  }
+
+  .statsGrid {
+    grid-template-columns: 1fr;
+    margin-bottom: 20px;
+  }
+
+  .resultHeader {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .candidateRow {
+    align-items: flex-start;
+  }
+
+  .candidateDetails {
+    align-items: flex-start;
+    flex: 1;
+  }
+
+  .candidateIdentity {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 2px;
+  }
+}
+
+@media (max-width: 380px) {
+  .actions {
+    grid-template-columns: 1fr;
+  }
+
+  .actions button:last-child:nth-child(3) {
+    grid-column: auto;
+  }
+
+  .modalBackdrop {
+    padding: 10px;
+  }
+}
