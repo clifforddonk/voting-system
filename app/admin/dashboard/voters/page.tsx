@@ -203,9 +203,9 @@ export default function VotersPage() {
                 <div className="min-w-0">
                   <div className="text-sm font-semibold text-slate-800">{voter.name}</div>
                   <div className="text-sm text-slate-500">{voter.email}</div>
-                  <div className="mt-1 text-xs text-slate-400">
+                  {/* <div className="mt-1 text-xs text-slate-400">
                     {voter.studentId ? `ID: ${voter.studentId}` : "No student ID"} • {voter.level ? `Level ${voter.level}` : "Level unknown"}
-                  </div>
+                  </div> */}
                 </div>
                 <span
                   className="inline-flex w-fit rounded-full px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.2em]"
