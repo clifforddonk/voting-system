@@ -74,7 +74,7 @@ export default function PublicResultsPage() {
           <div className="text-4xl">📊</div>
           <p className="mt-3 text-sm text-slate-500">{error}</p>
           <button
-            onClick={() => router.push("/")}
+            onClick={() => router.push("/vote")}
             className="mt-6 w-full rounded-lg bg-indigo-500 px-5 py-3 text-sm font-medium text-white transition-colors hover:bg-indigo-600"
           >
             Back to home
@@ -97,7 +97,9 @@ export default function PublicResultsPage() {
           <span className="h-4 w-px bg-slate-200" />
           <div className="flex min-w-0 items-center gap-2">
             <span className="h-2 w-2 shrink-0 rounded-full bg-indigo-500" />
-            <span className="truncate text-sm font-medium text-slate-800">QuickVote</span>
+            <span className="truncate text-sm font-medium text-slate-800">
+              QuickVote
+            </span>
           </div>
         </div>
         <span className="shrink-0 rounded-full bg-red-50 px-2.5 py-1 text-[10px] font-medium text-red-800 sm:px-3 sm:text-[11px]">
@@ -107,9 +109,14 @@ export default function PublicResultsPage() {
 
       <main className="mx-auto max-w-3xl px-4 py-8 sm:px-6 sm:py-10">
         <div className="mb-6 sm:mb-8">
-          <h1 className="text-xl font-medium text-slate-800 sm:text-2xl">{election?.title}</h1>
+          <h1 className="text-xl font-medium text-slate-800 sm:text-2xl">
+            {election?.title}
+          </h1>
           <p className="mt-1 text-sm text-slate-400">
-            Final results · Closed {election?.endDate ? new Date(election.endDate).toLocaleDateString() : ""}
+            Final results · Closed{" "}
+            {election?.endDate
+              ? new Date(election.endDate).toLocaleDateString()
+              : ""}
           </p>
         </div>
 
@@ -120,8 +127,13 @@ export default function PublicResultsPage() {
               { label: "Voted", value: stats.totalVoted },
               { label: "Turnout", value: `${stats.turnout}%` },
             ].map(({ label, value }) => (
-              <div key={label} className="rounded-xl border border-slate-200 bg-white p-4 text-center">
-                <div className="text-xl font-medium text-slate-800 sm:text-2xl">{value}</div>
+              <div
+                key={label}
+                className="rounded-xl border border-slate-200 bg-white p-4 text-center"
+              >
+                <div className="text-xl font-medium text-slate-800 sm:text-2xl">
+                  {value}
+                </div>
                 <div className="mt-1 text-xs text-slate-400">{label}</div>
               </div>
             ))}
@@ -130,20 +142,31 @@ export default function PublicResultsPage() {
 
         <div className="space-y-4">
           {results.map((result) => (
-            <section key={result.position._id} className="overflow-hidden rounded-xl border border-slate-200 bg-white">
+            <section
+              key={result.position._id}
+              className="overflow-hidden rounded-xl border border-slate-200 bg-white"
+            >
               <header className="flex flex-col gap-1 border-b border-slate-100 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-5">
-                <h2 className="text-sm font-medium text-slate-800">{result.position.title}</h2>
-                <span className="text-xs text-slate-400">{result.totalVotes} votes</span>
+                <h2 className="text-sm font-medium text-slate-800">
+                  {result.position.title}
+                </h2>
+                <span className="text-xs text-slate-400">
+                  {result.totalVotes} votes
+                </span>
               </header>
               <div className="space-y-4 p-4 sm:p-5">
                 {result.candidates.map((candidate) => {
-                  const isWinner = result.winner?._id === candidate._id && result.totalVotes > 0;
+                  const isWinner =
+                    result.winner?._id === candidate._id &&
+                    result.totalVotes > 0;
                   return (
                     <div key={candidate._id}>
                       <div className="mb-2 flex items-start justify-between gap-3 text-sm">
                         <div className="flex min-w-0 flex-wrap items-center gap-2">
                           {isWinner && <span aria-label="Winner">🏆</span>}
-                          <span className={`break-words ${isWinner ? "font-semibold text-slate-900" : "text-slate-700"}`}>
+                          <span
+                            className={`break-words ${isWinner ? "font-semibold text-slate-900" : "text-slate-700"}`}
+                          >
                             {candidate.name}
                           </span>
                           {isWinner && (
@@ -152,7 +175,9 @@ export default function PublicResultsPage() {
                             </span>
                           )}
                         </div>
-                        <span className="shrink-0 font-medium text-slate-800">{candidate.percentage}%</span>
+                        <span className="shrink-0 font-medium text-slate-800">
+                          {candidate.percentage}%
+                        </span>
                       </div>
                       <div className="h-2 overflow-hidden rounded-full bg-slate-100">
                         <div

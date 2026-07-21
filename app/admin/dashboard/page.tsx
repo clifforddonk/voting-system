@@ -100,7 +100,10 @@ export default function AdminDashboard() {
             </div>
             <div className="mt-1 text-sm text-emerald-700">
               Closes{" "}
-              {new Date(stats.activeElection.endDate).toLocaleDateString()}
+              {new Date(stats.activeElection.endDate).toLocaleString([], {
+                dateStyle: "medium",
+                timeStyle: "short",
+              })}
             </div>
           </div>
           <button
