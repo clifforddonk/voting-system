@@ -255,19 +255,19 @@ export default function AdminDashboard() {
             {
               label: "Import voters",
               desc: "Upload a CSV to add voters",
-              href: "admin/dashboard/voters",
+              href: "/admin/dashboard/voters",
               icon: "👥",
             },
             {
               label: "Manage elections",
               desc: "Create or activate an election",
-              href: "admin/dashboard/elections",
+              href: "/admin/dashboard/elections",
               icon: "🗳️",
             },
             {
               label: "View results",
               desc: "See live vote counts",
-              href: "admin/dashboard/results",
+              href: "/admin/dashboard/results",
               icon: "📈",
             },
           ].map(({ label, desc, href, icon }) => (
